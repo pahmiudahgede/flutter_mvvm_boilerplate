@@ -10,6 +10,7 @@ environment:
 dependencies:
   carousel_slider: ^5.0.0
   connectivity_plus: ^6.1.4
+  crypto: ^3.0.6
   custom_refresh_indicator: ^4.0.1
   flutter:
     sdk: flutter

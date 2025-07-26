@@ -25,4 +25,25 @@ class ApiClient {
       throw Exception('Network Error: $e');
     }
   }
+
+  // New POST method for CREATE, UPDATE, DELETE operations
+  static Future<Map<String, dynamic>> post(Map<String, dynamic> body) async {
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(body),
+      ).timeout(const Duration(seconds: 30));
+      
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Network Error: $e');
+    }
+  }
 }

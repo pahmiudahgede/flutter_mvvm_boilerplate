@@ -5,7 +5,7 @@ import 'package:fluttercomponentui/component/header/header.component.dart';
 import 'package:fluttercomponentui/component/refresh/refresh.component.dart';
 import 'package:fluttercomponentui/component/shimmer/shimmer.component.dart';
 import 'package:fluttercomponentui/component/states/state.component.dart';
-import 'package:go_router/go_router.dart';
+import 'package:fluttercomponentui/core/utils/router.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttercomponentui/core/utils/varguide.dart';
 import 'package:fluttercomponentui/data/user/user.vmod.dart';
@@ -41,6 +41,7 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
       ),
+      floatingActionButton: _buildAddButton(),
     );
   }
 
@@ -51,12 +52,29 @@ class _UserScreenState extends State<UserScreen> {
       leadingIcon: Icons.people,
       actions: [
         HeaderActionButton(
+          icon: Icons.add,
+          onPressed: () {
+            router.push('/add-user');
+          },
+        ),
+        HeaderActionButton(
           icon: Icons.refresh,
           onPressed: () {
             context.read<UserViewModel>().getAllUsers();
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildAddButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        router.push('/add-user');
+      },
+      backgroundColor: AppColors.primaryBlack,
+      foregroundColor: AppColors.primaryWhite,
+      child: const Icon(Icons.add),
     );
   }
 
@@ -150,7 +168,7 @@ class _UserScreenState extends State<UserScreen> {
                         return UserCard(
                           user: user,
                           onTap: () {
-                            context.push('/user-detail', extra: user);
+                            router.push('/user-detail', extra: user);
                           },
                         );
                       },
