@@ -2,18 +2,6 @@
 
 A Flutter application built with Clean MVVM (Model-View-ViewModel) architecture pattern, emphasizing separation of concerns, testability, and maintainability.
 
-## 📋 Table of Contents
-
-- [Architecture Overview](#architecture-overview)
-- [Project Structure](#project-structure)
-- [Architecture Layers](#architecture-layers)
-- [Data Flow](#data-flow)
-- [Getting Started](#getting-started)
-- [Code Examples](#code-examples)
-- [Testing Strategy](#testing-strategy)
-- [Contributing](#contributing)
-- [Dependencies](#dependencies)
-
 ## 🏗️ Architecture Overview
 
 This project implements a **Clean MVVM Architecture** with Repository Pattern and Dependency Injection, providing:
@@ -312,42 +300,6 @@ void main() {
 - Add tests for new features
 - Update documentation as needed
 - Use meaningful variable and function names
-
-## 📦 Dependencies
-
-### Core Dependencies
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  provider: ^6.0.5          # State management
-  dio: ^5.3.2               # HTTP client
-  get_it: ^7.6.4            # Dependency injection
-  go_router: ^12.1.1        # Navigation
-  flutter_dotenv: ^5.1.0    # Environment variables
-```
-
-### Development Dependencies
-```yaml
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  mockito: ^5.4.2           # Mocking for tests
-  build_runner: ^2.4.7      # Code generation
-  json_annotation: ^4.8.1   # JSON serialization
-```
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-If you have any questions or need help with this architecture, please:
-
-1. Check the [documentation](docs/)
-2. Search existing [issues](issues/)
-3. Create a new [issue](issues/new) if needed
 
 ---
 
