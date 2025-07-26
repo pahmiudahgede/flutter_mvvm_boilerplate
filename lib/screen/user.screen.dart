@@ -52,12 +52,6 @@ class _UserScreenState extends State<UserScreen> {
       leadingIcon: Icons.people,
       actions: [
         HeaderActionButton(
-          icon: Icons.add,
-          onPressed: () {
-            router.push('/add-user');
-          },
-        ),
-        HeaderActionButton(
           icon: Icons.refresh,
           onPressed: () {
             context.read<UserViewModel>().getAllUsers();

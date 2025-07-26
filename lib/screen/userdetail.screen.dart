@@ -487,7 +487,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               ),
               DetailRow(
                 label: 'Date of Birth',
-                value: currentUser.dateOfBirth,
+                value: currentUser.dateOfBirthReadable, // Human readable format
                 icon: Icons.cake_outlined,
               ),
               DetailRow(
@@ -526,12 +526,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               ),
               DetailRow(
                 label: 'Created At',
-                value: currentUser.createdAt,
+                value: currentUser.createdAtReadable, // Human readable format
                 icon: Icons.access_time_outlined,
               ),
               DetailRow(
                 label: 'Updated At',
-                value: currentUser.updatedAt,
+                value: currentUser.updatedAtReadable, // Human readable format
                 icon: Icons.update_outlined,
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttercomponentui/core/utils/date_helper.dart';
 import 'package:fluttercomponentui/core/utils/router.dart';
 import 'package:fluttercomponentui/core/utils/varguide.dart';
 import 'package:fluttercomponentui/data/user/user.vmod.dart';
@@ -140,10 +141,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.accentLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.accentLight, width: 1),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -167,18 +165,19 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   ),
                 ),
                 dropdownColor: AppColors.backgroundSecondary,
-                items: ['Male', 'Female'].map((gender) {
-                  return DropdownMenuItem(
-                    value: gender,
-                    child: Text(
-                      gender,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                items:
+                    ['Male', 'Female'].map((gender) {
+                      return DropdownMenuItem(
+                        value: gender,
+                        child: Text(
+                          gender,
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      );
+                    }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value!;
@@ -193,18 +192,17 @@ class _AddUserScreenState extends State<AddUserScreen> {
   }
 
   Widget _buildDateOfBirthField() {
-    return _buildTextFormField(
+    return DatePickerField(
       controller: _dateOfBirthController,
       label: 'Date of Birth',
-      hintText: 'DD-MM-YYYY (e.g., 15-01-1990)',
+      hintText: 'Select date of birth',
       icon: Icons.calendar_today_outlined,
       validator: (value) {
         if (value?.isEmpty ?? true) {
           return 'Date of birth is required';
         }
-        // Simple regex for DD-MM-YYYY format
-        if (!RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(value!)) {
-          return 'Use DD-MM-YYYY format';
+        if (!DateHelper.isValidIndonesianDate(value!)) {
+          return 'Invalid date format';
         }
         return null;
       },
@@ -307,21 +305,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.accentLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.accentLight, width: 1),
       ),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
           hintText: hintText,
-          prefixIcon: Icon(
-            icon,
-            color: AppColors.textSecondary,
-            size: 20.sp,
-          ),
+          prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 20.sp),
           suffixIcon: suffixIcon,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
@@ -333,19 +324,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
             color: AppColors.textSecondary,
             fontSize: 14.sp,
           ),
-          hintStyle: TextStyle(
-            color: AppColors.textLight,
-            fontSize: 14.sp,
-          ),
+          hintStyle: TextStyle(color: AppColors.textLight, fontSize: 14.sp),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 16.h,
           ),
         ),
-        style: TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 16.sp,
-        ),
+        style: TextStyle(color: AppColors.textPrimary, fontSize: 16.sp),
         keyboardType: keyboardType,
         obscureText: obscureText,
         maxLines: maxLines,
@@ -359,12 +344,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.accentLight,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: AppColors.accentLight, width: 1)),
       ),
       child: Row(
         children: [
@@ -376,10 +356,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                side: BorderSide(
-                  color: AppColors.lightGray,
-                  width: 1,
-                ),
+                side: BorderSide(color: AppColors.lightGray, width: 1),
               ),
               child: Text(
                 'Cancel',
@@ -403,25 +380,26 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 ),
                 elevation: 0,
               ),
-              child: _isLoading
-                  ? SizedBox(
-                      height: 20.h,
-                      width: 20.h,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primaryWhite,
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        height: 20.h,
+                        width: 20.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primaryWhite,
+                          ),
+                        ),
+                      )
+                      : Text(
+                        'Create User',
+                        style: TextStyle(
+                          color: AppColors.primaryWhite,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    )
-                  : Text(
-                      'Create User',
-                      style: TextStyle(
-                        color: AppColors.primaryWhite,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
             ),
           ),
         ],
@@ -493,11 +471,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           SnackBar(
             content: Row(
               children: [
-                Icon(
-                  Icons.error,
-                  color: AppColors.primaryWhite,
-                  size: 20.sp,
-                ),
+                Icon(Icons.error, color: AppColors.primaryWhite, size: 20.sp),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Text(

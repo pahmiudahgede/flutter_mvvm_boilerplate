@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
-import 'package:intl/intl.dart';
+import 'package:fluttercomponentui/core/utils/date_helper.dart';
 
 class User {
   final String id;
@@ -35,14 +35,16 @@ class User {
       id: json['ID'] ?? '',
       name: json['Name'] ?? '',
       gender: json['Gender'] ?? '',
-      dateOfBirth: json['Dateofbirth'] ?? '',
+      // Convert ISO DateTime to Indonesian format
+      dateOfBirth: DateHelper.formatFromISO(json['Dateofbirth'] ?? ''),
       placeOfBirth: json['Placeofbirth'] ?? '',
       address: json['Address'] ?? '',
       email: json['Email'] ?? '',
       password: json['Password'] ?? '',
       avatar: json['Avatar'] ?? '',
-      createdAt: json['CreatedAt'] ?? '',
-      updatedAt: json['UpdatedAt'] ?? '',
+      // Convert ISO DateTime to Indonesian format
+      createdAt: DateHelper.formatFromISO(json['CreatedAt'] ?? ''),
+      updatedAt: DateHelper.formatFromISO(json['UpdatedAt'] ?? ''),
     );
   }
 
@@ -51,14 +53,16 @@ class User {
       'ID': id,
       'Name': name,
       'Gender': gender,
-      'Dateofbirth': dateOfBirth,
+      // Convert Indonesian format to ISO DateTime
+      'Dateofbirth': DateHelper.formatToISO(dateOfBirth),
       'Placeofbirth': placeOfBirth,
       'Address': address,
       'Email': email,
       'Password': password,
       'Avatar': avatar,
-      'CreatedAt': createdAt,
-      'UpdatedAt': updatedAt,
+      // Convert Indonesian format to ISO DateTime
+      'CreatedAt': DateHelper.formatToISO(createdAt),
+      'UpdatedAt': DateHelper.formatToISO(updatedAt),
     };
   }
 
@@ -76,13 +80,13 @@ class User {
     final String userId = _generateCUID();
     final String hashedPassword = _hashPassword(password);
     final String userAvatar = avatar ?? _generateAvatar();
-    final String currentDate = _getCurrentDate();
+    final String currentDate = DateHelper.getCurrentDate();
 
     return User(
       id: userId,
       name: name,
       gender: gender,
-      dateOfBirth: dateOfBirth,
+      dateOfBirth: dateOfBirth, // Already in DD-MM-YYYY format from form
       placeOfBirth: placeOfBirth,
       address: address,
       email: email.toLowerCase(),
@@ -115,7 +119,7 @@ class User {
       password: password != null ? _hashPassword(password) : this.password,
       avatar: avatar ?? this.avatar,
       createdAt: createdAt, // CreatedAt never changes
-      updatedAt: _getCurrentDate(), // Always update timestamp
+      updatedAt: DateHelper.getCurrentDate(), // Always update timestamp
     );
   }
 
@@ -134,18 +138,28 @@ class User {
 
     if (name != null) updateData['Name'] = name;
     if (gender != null) updateData['Gender'] = gender;
-    if (dateOfBirth != null) updateData['Dateofbirth'] = dateOfBirth;
+    if (dateOfBirth != null) {
+      updateData['Dateofbirth'] = DateHelper.formatToISO(dateOfBirth);
+    }
     if (placeOfBirth != null) updateData['Placeofbirth'] = placeOfBirth;
     if (address != null) updateData['Address'] = address;
     if (email != null) updateData['Email'] = email.toLowerCase();
     if (password != null) updateData['Password'] = _hashPassword(password);
     if (avatar != null) updateData['Avatar'] = avatar;
 
-    // Always update timestamp
-    updateData['UpdatedAt'] = _getCurrentDate();
+    // Always update timestamp - convert to ISO for API
+    updateData['UpdatedAt'] = DateHelper.getCurrentDateISO();
 
     return updateData;
   }
+
+  // Getter for human readable dates
+  String get dateOfBirthReadable =>
+      DateHelper.formatToHumanReadable(DateHelper.formatToISO(dateOfBirth));
+  String get createdAtReadable =>
+      DateHelper.formatToHumanReadable(DateHelper.formatToISO(createdAt));
+  String get updatedAtReadable =>
+      DateHelper.formatToHumanReadable(DateHelper.formatToISO(updatedAt));
 
   // Private helper methods
   static String _generateCUID() {
@@ -165,22 +179,18 @@ class User {
     final randomNum = Random().nextInt(70) + 1;
     return 'https://i.pravatar.cc/150?img=$randomNum';
   }
-
-  static String _getCurrentDate() {
-    return DateFormat('dd-MM-yyyy').format(DateTime.now());
-  }
 }
 
 class ApiResponse<T> {
   final Meta meta;
   final List<T> data;
 
-  ApiResponse({
-    required this.meta,
-    required this.data,
-  });
+  ApiResponse({required this.meta, required this.data});
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT) {
+  factory ApiResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonT,
+  ) {
     return ApiResponse(
       meta: Meta.fromJson(json['meta']),
       data: (json['data'] as List).map((item) => fromJsonT(item)).toList(),
@@ -196,11 +206,7 @@ class Meta {
   final String message;
   final String? timestamp;
 
-  Meta({
-    required this.status,
-    required this.message,
-    this.timestamp,
-  });
+  Meta({required this.status, required this.message, this.timestamp});
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(

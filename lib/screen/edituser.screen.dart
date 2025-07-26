@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttercomponentui/core/utils/date_helper.dart';
 import 'package:fluttercomponentui/core/utils/router.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttercomponentui/core/utils/varguide.dart';
 import 'package:fluttercomponentui/data/user/user.model.dart';
@@ -34,8 +34,12 @@ class _EditUserScreenState extends State<EditUserScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
-    _dateOfBirthController = TextEditingController(text: widget.user.dateOfBirth);
-    _placeOfBirthController = TextEditingController(text: widget.user.placeOfBirth);
+    _dateOfBirthController = TextEditingController(
+      text: widget.user.dateOfBirth,
+    );
+    _placeOfBirthController = TextEditingController(
+      text: widget.user.placeOfBirth,
+    );
     _addressController = TextEditingController(text: widget.user.address);
     _selectedGender = widget.user.gender;
   }
@@ -126,10 +130,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: AppColors.accentLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.accentLight, width: 1),
       ),
       child: Row(
         children: [
@@ -137,9 +138,10 @@ class _EditUserScreenState extends State<EditUserScreen> {
             radius: 24.r,
             backgroundImage: NetworkImage(widget.user.avatar),
             onBackgroundImageError: (_, __) {},
-            child: widget.user.avatar.isEmpty 
-                ? Icon(Icons.person, size: 24.sp) 
-                : null,
+            child:
+                widget.user.avatar.isEmpty
+                    ? Icon(Icons.person, size: 24.sp)
+                    : null,
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -165,10 +167,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 SizedBox(height: 4.h),
                 Text(
                   'ID: ${widget.user.id}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textLight,
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: AppColors.textLight),
                 ),
               ],
             ),
@@ -212,10 +211,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.accentLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.accentLight, width: 1),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -239,18 +235,19 @@ class _EditUserScreenState extends State<EditUserScreen> {
                   ),
                 ),
                 dropdownColor: AppColors.backgroundSecondary,
-                items: ['Male', 'Female'].map((gender) {
-                  return DropdownMenuItem(
-                    value: gender,
-                    child: Text(
-                      gender,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                items:
+                    ['Male', 'Female'].map((gender) {
+                      return DropdownMenuItem(
+                        value: gender,
+                        child: Text(
+                          gender,
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      );
+                    }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value!;
@@ -265,17 +262,17 @@ class _EditUserScreenState extends State<EditUserScreen> {
   }
 
   Widget _buildDateOfBirthField() {
-    return _buildTextFormField(
+    return DatePickerField(
       controller: _dateOfBirthController,
       label: 'Date of Birth',
-      hintText: 'DD-MM-YYYY (e.g., 15-01-1990)',
+      hintText: 'Select date of birth',
       icon: Icons.calendar_today_outlined,
       validator: (value) {
         if (value?.isEmpty ?? true) {
           return 'Date of birth is required';
         }
-        if (!RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(value!)) {
-          return 'Use DD-MM-YYYY format';
+        if (!DateHelper.isValidIndonesianDate(value!)) {
+          return 'Invalid date format';
         }
         return null;
       },
@@ -345,21 +342,14 @@ class _EditUserScreenState extends State<EditUserScreen> {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.accentLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.accentLight, width: 1),
       ),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
           hintText: hintText,
-          prefixIcon: Icon(
-            icon,
-            color: AppColors.textSecondary,
-            size: 20.sp,
-          ),
+          prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 20.sp),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide.none,
@@ -370,19 +360,13 @@ class _EditUserScreenState extends State<EditUserScreen> {
             color: AppColors.textSecondary,
             fontSize: 14.sp,
           ),
-          hintStyle: TextStyle(
-            color: AppColors.textLight,
-            fontSize: 14.sp,
-          ),
+          hintStyle: TextStyle(color: AppColors.textLight, fontSize: 14.sp),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 16.h,
           ),
         ),
-        style: TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 16.sp,
-        ),
+        style: TextStyle(color: AppColors.textPrimary, fontSize: 16.sp),
         keyboardType: keyboardType,
         maxLines: maxLines,
         validator: validator,
@@ -395,12 +379,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.accentLight,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: AppColors.accentLight, width: 1)),
       ),
       child: Row(
         children: [
@@ -412,10 +391,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                side: BorderSide(
-                  color: AppColors.lightGray,
-                  width: 1,
-                ),
+                side: BorderSide(color: AppColors.lightGray, width: 1),
               ),
               child: Text(
                 'Cancel',
@@ -439,25 +415,26 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 ),
                 elevation: 0,
               ),
-              child: _isLoading
-                  ? SizedBox(
-                      height: 20.h,
-                      width: 20.h,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primaryWhite,
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        height: 20.h,
+                        width: 20.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primaryWhite,
+                          ),
+                        ),
+                      )
+                      : Text(
+                        'Update User',
+                        style: TextStyle(
+                          color: AppColors.primaryWhite,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    )
-                  : Text(
-                      'Update User',
-                      style: TextStyle(
-                        color: AppColors.primaryWhite,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
             ),
           ),
         ],
@@ -487,8 +464,9 @@ class _EditUserScreenState extends State<EditUserScreen> {
 
       if (success) {
         // Get updated user from ViewModel
-        final updatedUser = context.read<UserViewModel>().users
-            .firstWhere((user) => user.id == widget.user.id);
+        final updatedUser = context.read<UserViewModel>().users.firstWhere(
+          (user) => user.id == widget.user.id,
+        );
 
         if (mounted) {
           // Show success message
@@ -523,7 +501,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
           );
 
           // Navigate back to user detail with updated user
-          context.pop(updatedUser);
+          router.pop(updatedUser);
         }
       }
     } catch (e) {
@@ -533,11 +511,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
           SnackBar(
             content: Row(
               children: [
-                Icon(
-                  Icons.error,
-                  color: AppColors.primaryWhite,
-                  size: 20.sp,
-                ),
+                Icon(Icons.error, color: AppColors.primaryWhite, size: 20.sp),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
