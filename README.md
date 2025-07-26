@@ -1,6 +1,34 @@
-# Flutter Clean MVVM Architecture
+# Flutter Clean MVVM Architecture with Google Sheets API
 
-A Flutter application built with Clean MVVM (Model-View-ViewModel) architecture pattern, emphasizing separation of concerns, testability, and maintainability.
+A Flutter application built with Clean MVVM (Model-View-ViewModel) architecture pattern, demonstrating how to integrate Google Sheets as a backend API using Google Apps Script. This project emphasizes separation of concerns, testability, and maintainability while showcasing serverless backend integration.
+
+## 🌟 Key Features
+
+- **Clean MVVM Architecture** with Repository Pattern
+- **Google Sheets as Backend** - No traditional server required
+- **Complete CRUD Operations** - Create, Read, Update, Delete users
+- **Dependency Injection** using GetIt service locator
+- **State Management** with Provider pattern
+- **Responsive Design** with ScreenUtil
+- **Form Validation** and error handling
+- **Indonesian Date Formatting** with timezone support
+- **Search Functionality** with real-time filtering
+- **Modern UI/UX** with loading states and animations
+
+## 🔗 Backend Integration
+
+This Flutter app integrates with a **Google Sheets API** built using Google Apps Script. The backend implementation is available at:
+
+**🔗 [Google Sheets API Repository](https://github.com/pahmiudahgede/spreadsheet_api)**
+
+### Why Google Sheets as Backend?
+
+- ✅ **Zero Server Costs** - No hosting fees or server maintenance
+- ✅ **Real-time Collaboration** - Multiple users can edit data simultaneously  
+- ✅ **Easy Data Management** - Non-technical users can manage data directly
+- ✅ **Instant Deployment** - API ready in minutes
+- ✅ **Built-in Backup** - Google's infrastructure handles data safety
+- ✅ **Perfect for Prototyping** - Quick MVPs and proof of concepts
 
 ## 🏗️ Architecture Overview
 
@@ -12,6 +40,15 @@ This project implements a **Clean MVVM Architecture** with Repository Pattern an
 - **Scalability**: Architecture that supports feature growth
 - **Reusability**: Components and services designed for reuse
 
+```
+┌─────────────────┐    HTTP/JSON    ┌──────────────────┐    ┌─────────────────┐
+│   Flutter App   │ ──────────────→ │ Google Apps      │ ←──│ Google Sheets   │
+│                 │                 │ Script API       │    │ Database        │
+│ • MVVM Pattern  │ ←────────────── │                  │    │                 │
+│ • State Mgmt    │   REST Response │ • doGet()        │    │ • User Data     │
+│ • Clean Arch    │                 │ • doPost()       │    │ • Real-time     │
+└─────────────────┘                 └──────────────────┘    └─────────────────┘
+```
 ![MVVM Architecture Pattern](assets/mvvm-pattern.png)
 
 ## 📁 Project Structure
@@ -23,8 +60,6 @@ lib/
 │   │   └── avatar.component.dart
 │   ├── cards/
 │   │   └── card.component.dart
-│   ├── chips/
-│   │   └── chip.component.dart
 │   ├── header/
 │   │   └── header.component.dart
 │   ├── refresh/
@@ -35,76 +70,134 @@ lib/
 │       └── state.component.dart
 ├── core/                      # Core Infrastructure
 │   ├── utils/
+│   │   ├── date_helper.dart   # Indonesian date formatting
 │   │   ├── provider.injection.dart
 │   │   ├── router.dart
 │   │   └── varguide.dart
-│   └── apiclient.dart
+│   └── apiclient.dart         # HTTP client for Sheets API
 ├── data/                      # Data Layer
 │   └── user/
-│       ├── user.model.dart    # Data Models
-│       ├── user.repo.dart     # Repository Implementation
-│       ├── user.service.dart  # Business Logic Services
-│       └── user.vmod.dart     # ViewModel
-├── screen/                    # UI Screens/Pages
-│   ├── user.screen.dart
-│   └── userdetail.screen.dart
-├── main.dart                  # Application Entry Point
-└── .env                       # Environment Variables
+│       ├── user.model.dart    # User data model with date conversion
+│       ├── user.repo.dart     # Repository implementation
+│       ├── user.service.dart  # API service layer
+│       └── user.vmod.dart     # ViewModel with state management
+├── screen/                    # UI Screens
+│   ├── adduser.screen.dart    # Create user form
+│   ├── edituser.screen.dart   # Update user form
+│   ├── user.screen.dart       # User list with search
+│   └── userdetail.screen.dart # User details with actions
+├── main.dart                  # Application entry point
+└── .env                       # Environment variables
 ```
 
 ## 🏛️ Architecture Layers
 
 ### 1. **Presentation Layer** (`screen/`, `component/`)
-- **Screens**: Main UI pages that users interact with
-- **Components**: Reusable UI widgets (avatars, cards, headers, etc.)
-- **Responsibilities**: 
-  - Display data to users
-  - Handle user interactions
-  - Manage UI state
-  - Navigate between screens
+- **Screens**: Main UI pages (User List, Add User, Edit User, User Details)
+- **Components**: Reusable UI widgets (cards, headers, loading states)
+- **Features**:
+  - Responsive design with ScreenUtil
+  - Form validation and error handling
+  - Loading states and animations
+  - Search functionality
+  - Pull-to-refresh
 
 ### 2. **ViewModel Layer** (`*.vmod.dart`)
-- **Purpose**: Bridge between UI and business logic
+- **State Management**: Provider pattern implementation
 - **Responsibilities**:
-  - Manage UI state
-  - Handle user input validation
-  - Call appropriate services
-  - Transform data for UI consumption
-  - Manage loading states and error handling
+  - Manage UI state (loading, success, error)
+  - Handle CRUD operations
+  - Input validation and sanitization
+  - Real-time search filtering
+  - Local state synchronization
 
-### 3. **Business Logic Layer** (`*.service.dart`)
-- **Purpose**: Contains application-specific business rules
+### 3. **Service Layer** (`*.service.dart`)
+- **API Integration**: Communicates with Google Sheets API
+- **Business Logic**: 
+  - Data transformation and validation
+  - Error handling and retry logic
+  - Request/response formatting
+  - Date formatting and timezone conversion
+
+### 4. **Repository Layer** (`*.repo.dart`)
+- **Data Abstraction**: Clean interface for data operations
 - **Responsibilities**:
-  - Implement business logic
-  - Coordinate between different data sources
-  - Apply business rules and validation
-  - Transform domain data
+  - Abstract API implementation details
+  - Error handling and transformation
+  - Data caching strategies
+  - Response parsing and validation
 
-### 4. **Data Layer** (`*.repo.dart`, `*.model.dart`)
-- **Repository**: Abstract interface for data operations
-- **Models**: Data structures and entities
-- **Responsibilities**:
-  - Abstract data source implementation
-  - Handle data caching and persistence
-  - Provide clean API for data operations
+### 5. **Model Layer** (`*.model.dart`)
+- **Data Models**: User entity with helper methods
+- **Features**:
+  - JSON serialization/deserialization
+  - Date formatting (ISO ↔ Indonesian format)
+  - Timezone conversion (UTC ↔ WIB)
+  - Data validation helpers
+  - Update data generation
 
-### 5. **Core Layer** (`core/`)
+### 6. **Core Layer** (`core/`)
 - **Infrastructure**: Common utilities and configurations
 - **Components**:
-  - **API Client**: HTTP client configuration
-  - **Dependency Injection**: Service container setup
-  - **Router**: Navigation management
-  - **Utils**: Helper functions and constants
+  - **API Client**: HTTP client for Google Sheets API
+  - **Date Helper**: Indonesian date formatting utilities
+  - **Dependency Injection**: GetIt service locator
+  - **Router**: Go Router navigation
+  - **Style Guide**: Design system constants
 
-## 🔄 Data Flow
+## 🔄 Data Flow Example
 
-1. **User Interaction** → Screen receives user input
-2. **Screen** → Calls ViewModel methods
-3. **ViewModel** → Invokes Service for business logic
-4. **Service** → Requests data from Repository
-5. **Repository** → Uses API Client for external calls
-6. **Data Returns** → API → Repository → Service → ViewModel → Screen
-7. **UI Update** → Screen reflects new state to user
+### Creating a New User:
+1. **User fills form** → `AddUserScreen`
+2. **Form validation** → `AddUserScreen` validates inputs
+3. **Submit action** → Calls `UserViewModel.createUser()`
+4. **Business logic** → `UserService.createUser()` processes data
+5. **API call** → `UserRepository` calls Google Sheets API
+6. **Data transformation** → Convert Indonesian date to ISO format
+7. **HTTP request** → `ApiClient.post()` sends data to Apps Script
+8. **Response handling** → Parse response and update local state
+9. **UI update** → Show success message and navigate back
+
+## 🌐 API Integration
+
+### Google Sheets API Endpoints
+
+The app integrates with the following API endpoints:
+
+```dart
+// Get all users
+GET https://script.google.com/.../exec?action=getAll
+
+// Get user by ID  
+GET https://script.google.com/.../exec?action=getById&id={id}
+
+// Create user
+POST https://script.google.com/.../exec
+Body: {"action": "create", "data": {...}}
+
+// Update user
+POST https://script.google.com/.../exec  
+Body: {"action": "update", "id": "{id}", "data": {...}}
+
+// Delete user
+POST https://script.google.com/.../exec
+Body: {"action": "delete", "id": "{id}"}
+```
+
+### Data Format Handling
+
+The app handles automatic conversion between different date formats:
+
+```dart
+// API Response (ISO) → App (Indonesian)
+"2004-09-01T17:00:00.000Z" → "02-09-2004"
+
+// App (Indonesian) → API Request (ISO)  
+"02-09-2004" → "2004-09-01T17:00:00.000Z"
+
+// Display (Human Readable)
+"02-09-2004" → "2 September 2004, 00:00"
+```
 
 ## 🚀 Getting Started
 
@@ -112,6 +205,7 @@ lib/
 
 - Flutter SDK (>=3.0.0)
 - Dart SDK (>=2.19.0)
+- Google account for Sheets API setup
 - IDE (VS Code, Android Studio, or IntelliJ)
 
 ### Installation
@@ -119,7 +213,7 @@ lib/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd flutter-clean-mvvm
+   cd flutter-clean-mvvm-sheets
    ```
 
 2. **Install dependencies**
@@ -127,163 +221,102 @@ lib/
    flutter pub get
    ```
 
-3. **Configure environment**
+3. **Setup Google Sheets API**
+   - Follow setup guide in [spreadsheet_api repository](https://github.com/pahmiudahgede/spreadsheet_api)
+   - Deploy Google Apps Script and get the Web App URL
+
+4. **Configure environment**
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # Add your Google Sheets API URL
+   BASE_URL="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
    ```
 
-4. **Run the application**
+5. **Run the application**
    ```bash
    flutter run
    ```
 
-## 💻 Code Examples
+## 📱 Features Showcase
 
-### Model Example
-```dart
-// user.model.dart
-class UserModel {
-  final String id;
-  final String name;
-  final String email;
-  
-  UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-  });
-  
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-    );
-  }
-}
+### User Management
+- **User List**: Displays all users with search functionality
+- **Add User**: Form with validation for creating new users
+- **User Details**: Complete user information display
+- **Edit User**: Update user information with pre-filled forms
+- **Delete User**: Confirmation dialog with safe deletion
+
+### UI/UX Features  
+- **Responsive Design**: Adapts to different screen sizes
+- **Loading States**: Shimmer effects and progress indicators
+- **Error Handling**: User-friendly error messages
+- **Form Validation**: Real-time input validation
+- **Search**: Real-time filtering of user list
+- **Pull-to-Refresh**: Update data with pull gesture
+- **Smooth Navigation**: Go Router with proper transitions
+
+### Data Features
+- **Automatic Date Conversion**: ISO ↔ Indonesian format
+- **Timezone Handling**: UTC to WIB conversion
+- **Form Pre-filling**: Edit forms populated with existing data
+- **Real-time Updates**: UI reflects API changes immediately
+- **Offline Handling**: Graceful degradation when offline
+
+## 🧪 Testing
+
+### API Testing
+Test the Google Sheets API endpoints using cURL or Postman:
+
+```bash
+# Test getting all users
+curl "YOUR_API_URL?action=getAll"
+
+# Test creating a user
+curl -X POST YOUR_API_URL \
+  -H "Content-Type: application/json" \
+  -d '{"action": "create", "data": {...}}'
 ```
 
-### Repository Example
-```dart
-// user.repo.dart
-abstract class UserRepository {
-  Future<List<UserModel>> getUsers();
-  Future<UserModel> getUserById(String id);
-  Future<UserModel> createUser(UserModel user);
-}
+### Unit Testing
+```bash
+# Run unit tests
+flutter test
 
-class UserRepositoryImpl implements UserRepository {
-  final ApiClient _apiClient;
-  
-  UserRepositoryImpl(this._apiClient);
-  
-  @override
-  Future<List<UserModel>> getUsers() async {
-    final response = await _apiClient.get('/users');
-    return (response.data as List)
-        .map((json) => UserModel.fromJson(json))
-        .toList();
-  }
-}
+# Run tests with coverage
+flutter test --coverage
 ```
 
-### Service Example
-```dart
-// user.service.dart
-class UserService {
-  final UserRepository _userRepository;
+## 📦 Dependencies
+
+### Core Dependencies
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
   
-  UserService(this._userRepository);
+  # State Management
+  provider: ^6.1.1
   
-  Future<List<UserModel>> getActiveUsers() async {
-    final users = await _userRepository.getUsers();
-    return users.where((user) => user.isActive).toList();
-  }
-}
+  # Network
+  http: ^1.1.0
+  flutter_dotenv: ^5.1.0
+  
+  # UI
+  flutter_screenutil: ^5.9.0
+  go_router: ^12.1.3
+  
+  # Utilities
+  get_it: ^7.6.4
+  intl: ^0.19.0
+  crypto: ^3.0.3
 ```
 
-### ViewModel Example
-```dart
-// user.vmod.dart
-class UserViewModel extends ChangeNotifier {
-  final UserService _userService;
-  
-  List<UserModel> _users = [];
-  bool _isLoading = false;
-  String? _error;
-  
-  List<UserModel> get users => _users;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-  
-  UserViewModel(this._userService);
-  
-  Future<void> loadUsers() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    
-    try {
-      _users = await _userService.getActiveUsers();
-    } catch (e) {
-      _error = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-}
-```
-
-## 🧪 Testing Strategy
-
-### Unit Tests
-- **Models**: Test data serialization/deserialization
-- **Services**: Test business logic implementation
-- **Repositories**: Test data access logic
-- **ViewModels**: Test state management and user interactions
-
-### Integration Tests
-- Test complete data flow from API to UI
-- Test navigation between screens
-- Test error handling scenarios
-
-### Widget Tests
-- Test individual components
-- Test screen layouts and interactions
-- Test state updates in UI
-
-### Example Test
-```dart
-// test/user_service_test.dart
-void main() {
-  group('UserService', () {
-    late UserService userService;
-    late MockUserRepository mockRepository;
-    
-    setUp(() {
-      mockRepository = MockUserRepository();
-      userService = UserService(mockRepository);
-    });
-    
-    test('should return active users only', () async {
-      // Arrange
-      final users = [
-        UserModel(id: '1', name: 'John', isActive: true),
-        UserModel(id: '2', name: 'Jane', isActive: false),
-      ];
-      when(mockRepository.getUsers()).thenAnswer((_) async => users);
-      
-      // Act
-      final result = await userService.getActiveUsers();
-      
-      // Assert
-      expect(result.length, 1);
-      expect(result.first.name, 'John');
-    });
-  });
-}
+### Dev Dependencies
+```yaml
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
 ```
 
 ## 🤝 Contributing
@@ -296,11 +329,25 @@ void main() {
 
 ### Coding Standards
 - Follow Dart/Flutter conventions
-- Write meaningful commit messages
+- Write meaningful commit messages  
 - Add tests for new features
 - Update documentation as needed
-- Use meaningful variable and function names
+- Maintain MVVM architecture patterns
+- Follow the established project structure
+
+## 📚 Learning Resources
+
+- **Google Sheets API**: [spreadsheet_api repository](https://github.com/pahmiudahgede/spreadsheet_api)
+- **Flutter Clean Architecture**: [Official Guide](https://docs.flutter.dev/development/data-and-backend/state-mgmt/options#provider)
+- **MVVM Pattern**: [Flutter MVVM](https://medium.com/flutter-community/flutter-mvvm-architecture-f8bed2521958)
+- **Provider State Management**: [Provider Documentation](https://pub.dev/packages/provider)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 **Happy Coding!** 🚀
+
+*Built with ❤️ using Flutter and Google Sheets*
